@@ -708,7 +708,9 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             }
         }
 
-        private void textBox1_SocialID_TextChanged(object sender, EventArgs e)
+  
+
+        private void textBox1_SocialID_TextChanged_1(object sender, EventArgs e)
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(textBox1_SocialID.Text, "[^0-9]") || textBox1_SocialID.Text.Length > 15)
             {

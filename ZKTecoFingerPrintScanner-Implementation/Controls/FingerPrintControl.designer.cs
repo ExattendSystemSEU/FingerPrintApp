@@ -273,6 +273,7 @@
             this.textBox1_SocialID.Name = "textBox1_SocialID";
             this.textBox1_SocialID.Size = new System.Drawing.Size(223, 23);
             this.textBox1_SocialID.TabIndex = 787;
+            this.textBox1_SocialID.TextChanged += new System.EventHandler(this.textBox1_SocialID_TextChanged_1);
             // 
             // tabControl1
             // 
