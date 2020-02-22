@@ -41,7 +41,7 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
         {
             List<Finger> ListEmployee = new List<Finger>();
 
-            String query = "select * From fingerprint   ";
+            String query = "select * From fingerprint";
 
             MySqlCommand cmd = new MySqlCommand(query, dbConn);
 
