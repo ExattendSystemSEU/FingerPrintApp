@@ -62,6 +62,14 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             InitializeComponent();
 
             ReInitializeInstance();
+            ComboBox_classesList.Enabled = false;
+            ExAttDBRepo eR = new ExAttDBRepo();
+            var allActivatedClasses = eR.GetAllActivatedClasses().Where(e=>e.CRN_State=="2").ToList();
+            foreach (var item in allActivatedClasses)
+            {
+                ComboBox_classesList.Items.Add(item.Exa_Course_CRN);
+            }
+           
         }
 
 
@@ -105,7 +113,10 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                 }
 
                 Utilities.EnableControls(false, btnInit);
-                Utilities.EnableControls(true, btnClose, btnEnroll, btnVerify, btnIdentify, btnFree);
+                Utilities.EnableControls(true, btnClose, btnEnroll/*, btnVerify*/, btnIdentify, btnFree);
+
+                ComboBox_classesList.Enabled = true;
+
 
                 RegisterCount = 0;
                 regTempLen = 0;
@@ -717,6 +728,28 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                 MessageBox.Show("Please enter only numbers less than 15 digits.");
                 textBox1_SocialID.Text = textBox1_SocialID.Text.Remove(textBox1_SocialID.Text.Length - 1);
             }
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var x = ComboBox_classesList.SelectedItem;
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboBox_classesList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Utilities.EnableControls(true, btnVerify);
+
         }
     }
 }

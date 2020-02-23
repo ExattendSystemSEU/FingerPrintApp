@@ -50,6 +50,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ComboBox_classesList = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.picFPImg)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -93,7 +95,7 @@
             this.lblFingerPrintCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F);
             this.lblFingerPrintCount.Location = new System.Drawing.Point(444, 126);
             this.lblFingerPrintCount.Name = "lblFingerPrintCount";
-            this.lblFingerPrintCount.Size = new System.Drawing.Size(53, 58);
+            this.lblFingerPrintCount.Size = new System.Drawing.Size(42, 46);
             this.lblFingerPrintCount.TabIndex = 783;
             this.lblFingerPrintCount.Text = "3";
             // 
@@ -119,7 +121,7 @@
             this.cmbIdx.FormattingEnabled = true;
             this.cmbIdx.Location = new System.Drawing.Point(620, 595);
             this.cmbIdx.Name = "cmbIdx";
-            this.cmbIdx.Size = new System.Drawing.Size(40, 25);
+            this.cmbIdx.Size = new System.Drawing.Size(40, 21);
             this.cmbIdx.TabIndex = 11;
             // 
             // label43
@@ -129,7 +131,7 @@
             this.label43.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.label43.Location = new System.Drawing.Point(502, 601);
             this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(141, 18);
+            this.label43.Size = new System.Drawing.Size(112, 15);
             this.label43.TabIndex = 758;
             this.label43.Text = "Available Devices :";
             // 
@@ -152,7 +154,7 @@
             this.btnVerify.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVerify.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnVerify.ForeColor = System.Drawing.Color.Black;
-            this.btnVerify.Location = new System.Drawing.Point(145, 62);
+            this.btnVerify.Location = new System.Drawing.Point(134, 105);
             this.btnVerify.Name = "btnVerify";
             this.btnVerify.Size = new System.Drawing.Size(191, 54);
             this.btnVerify.TabIndex = 775;
@@ -245,7 +247,7 @@
             this.label2_searchResult.AutoSize = true;
             this.label2_searchResult.Location = new System.Drawing.Point(29, 67);
             this.label2_searchResult.Name = "label2_searchResult";
-            this.label2_searchResult.Size = new System.Drawing.Size(0, 17);
+            this.label2_searchResult.Size = new System.Drawing.Size(0, 13);
             this.label2_searchResult.TabIndex = 790;
             // 
             // label1
@@ -253,7 +255,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(26, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 17);
+            this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 789;
             this.label1.Text = "Uni_ID";
             // 
@@ -271,7 +273,7 @@
             // 
             this.textBox1_SocialID.Location = new System.Drawing.Point(26, 32);
             this.textBox1_SocialID.Name = "textBox1_SocialID";
-            this.textBox1_SocialID.Size = new System.Drawing.Size(223, 23);
+            this.textBox1_SocialID.Size = new System.Drawing.Size(223, 20);
             this.textBox1_SocialID.TabIndex = 787;
             this.textBox1_SocialID.TextChanged += new System.EventHandler(this.textBox1_SocialID_TextChanged_1);
             // 
@@ -294,24 +296,27 @@
             this.tabPage1.Controls.Add(this.textBox1_SocialID);
             this.tabPage1.Controls.Add(this.btnFree);
             this.tabPage1.Controls.Add(this.lblFingerPrintCount);
-            this.tabPage1.Location = new System.Drawing.Point(4, 26);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(492, 171);
+            this.tabPage1.Size = new System.Drawing.Size(492, 175);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Register";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.ComboBox_classesList);
             this.tabPage2.Controls.Add(this.btnVerify);
-            this.tabPage2.Location = new System.Drawing.Point(4, 26);
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(492, 171);
+            this.tabPage2.Size = new System.Drawing.Size(492, 175);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Login";
             this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
             // pictureBox1
             // 
@@ -322,9 +327,29 @@
             this.pictureBox1.TabIndex = 792;
             this.pictureBox1.TabStop = false;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(131, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(78, 13);
+            this.label3.TabIndex = 793;
+            this.label3.Text = "Activated CRN";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
+            // ComboBox_classesList
+            // 
+            this.ComboBox_classesList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_classesList.FormattingEnabled = true;
+            this.ComboBox_classesList.Location = new System.Drawing.Point(134, 39);
+            this.ComboBox_classesList.Name = "ComboBox_classesList";
+            this.ComboBox_classesList.Size = new System.Drawing.Size(121, 21);
+            this.ComboBox_classesList.TabIndex = 795;
+            this.ComboBox_classesList.SelectedIndexChanged += new System.EventHandler(this.ComboBox_classesList_SelectedIndexChanged);
+            // 
             // FingerPrintControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
@@ -347,6 +372,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -376,5 +402,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ComboBox ComboBox_classesList;
+        private System.Windows.Forms.Label label3;
     }
 }

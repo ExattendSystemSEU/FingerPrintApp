@@ -105,6 +105,7 @@
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\ExAttDBRepo.cs" />
     <Compile Include="Models\ExUniDBRepo.cs" />
+    <Compile Include="Models\ClassStatus.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Finger.cs" />
     <Compile Include="Program.cs" />

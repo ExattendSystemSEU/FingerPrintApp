@@ -34,7 +34,7 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
         }
         #endregion
 
-       
+
 
 
         public List<Finger> GetAllFingers()
@@ -155,6 +155,41 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             }
             return 1;
 
+        }
+
+        public List<ClassStatus> GetAllActivatedClasses()
+        {
+            List<ClassStatus> ListClasse = new List<ClassStatus>();
+
+            String query = "SELECT * FROM class_activate";
+
+            MySqlCommand cmd = new MySqlCommand(query, dbConn);
+
+            dbConn.Open();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                String CRN_State = reader["CRN_State"].ToString();
+                String Exa_Course_CRN = reader["Exa_Course_CRN"].ToString();
+
+
+
+                ClassStatus u = new ClassStatus()
+                {
+                    CRN_State = CRN_State,
+                    Exa_Course_CRN = Exa_Course_CRN
+                };
+
+                ListClasse.Add(u);
+            }
+
+            reader.Close();
+
+            dbConn.Close();
+
+            return ListClasse;
         }
 
     }
