@@ -49,15 +49,18 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.ComboBox_classesList = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picFPImg)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblDeviceStatus
@@ -281,6 +284,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(11, 16);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -314,18 +318,19 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(492, 175);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Login";
+            this.tabPage2.Text = "Student";
             this.tabPage2.UseVisualStyleBackColor = true;
             this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
-            // pictureBox1
+            // ComboBox_classesList
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(178, 365);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(296, 144);
-            this.pictureBox1.TabIndex = 792;
-            this.pictureBox1.TabStop = false;
+            this.ComboBox_classesList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_classesList.FormattingEnabled = true;
+            this.ComboBox_classesList.Location = new System.Drawing.Point(134, 39);
+            this.ComboBox_classesList.Name = "ComboBox_classesList";
+            this.ComboBox_classesList.Size = new System.Drawing.Size(121, 21);
+            this.ComboBox_classesList.TabIndex = 795;
+            this.ComboBox_classesList.SelectedIndexChanged += new System.EventHandler(this.ComboBox_classesList_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -337,15 +342,42 @@
             this.label3.Text = "Activated CRN";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
-            // ComboBox_classesList
+            // pictureBox1
             // 
-            this.ComboBox_classesList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBox_classesList.FormattingEnabled = true;
-            this.ComboBox_classesList.Location = new System.Drawing.Point(134, 39);
-            this.ComboBox_classesList.Name = "ComboBox_classesList";
-            this.ComboBox_classesList.Size = new System.Drawing.Size(121, 21);
-            this.ComboBox_classesList.TabIndex = 795;
-            this.ComboBox_classesList.SelectedIndexChanged += new System.EventHandler(this.ComboBox_classesList_SelectedIndexChanged);
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(178, 365);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(296, 144);
+            this.pictureBox1.TabIndex = 792;
+            this.pictureBox1.TabStop = false;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.button1);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(492, 175);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Employee";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.White;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.button1.ForeColor = System.Drawing.Color.Black;
+            this.button1.Location = new System.Drawing.Point(128, 57);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(191, 54);
+            this.button1.TabIndex = 776;
+            this.button1.Text = "Verify";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // FingerPrintControl
             // 
@@ -374,6 +406,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -404,5 +437,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox ComboBox_classesList;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button button1;
     }
 }

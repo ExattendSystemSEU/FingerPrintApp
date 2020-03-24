@@ -192,5 +192,27 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             return ListClasse;
         }
 
+        internal bool CheckIsSavedthroughOneHour(int uni_ID)
+        {
+            var currentDatetime = DateTime.Now.ToString("yyyy-MM-dd HH:00:00");
+            String query = "select * From fin_attend where Uni_ID=" + uni_ID + " and Exa_Attend_Time >'" + currentDatetime +"'";
+
+            MySqlCommand cmd = new MySqlCommand(query, dbConn);
+
+            dbConn.Open();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int Uni_ID = (int)reader["Uni_ID"];
+
+                if (Uni_ID == uni_ID)
+                    return true;
+            }
+            reader.Close();
+            dbConn.Close();
+            return false;
+        }
     }
 }

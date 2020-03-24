@@ -20,6 +20,9 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
         const string VerifyButtonToggle = "Stop Verification";
         const string Disconnected = "Disconnected";
 
+        //1=student    .. 2=employee
+        int userType = 0;
+
         Thread captureThread = null;
 
         public Master parentForm = null;
@@ -33,6 +36,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
         bool bIsTimeToDie = false;
         bool IsRegister = false;
         bool bIdentify = true;
+        bool bIdentify2 = true;
         byte[] FPBuffer;   // Image Buffer
         int RegisterCount = 0;
 
@@ -64,18 +68,20 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             ReInitializeInstance();
             ComboBox_classesList.Enabled = false;
             ExAttDBRepo eR = new ExAttDBRepo();
-            var allActivatedClasses = eR.GetAllActivatedClasses().Where(e=>e.CRN_State=="2").ToList();
+            var allActivatedClasses = eR.GetAllActivatedClasses().ToList();
             foreach (var item in allActivatedClasses)
             {
                 ComboBox_classesList.Items.Add(item.Exa_Course_CRN);
             }
-           
+
         }
 
 
         // [ INITALIZE DEVICE ]
         private void bnInit_Click(object sender, EventArgs e)
         {
+            userType = 0;
+
             parentForm.statusBar.Visible = false;
             cmbIdx.Items.Clear();
 
@@ -89,7 +95,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
                     cmbIdx.SelectedIndex = 0;
                     btnInit.Enabled = false;
-
+                    button1.Enabled = true;
                     DisplayMessage(MessageManager.msg_FP_InitComplete, true);
                 }
                 else
@@ -210,6 +216,8 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
         private void bnVerify_Click(object sender, EventArgs e)
         {
+            userType = 1;
+
             if (bIdentify)
             {
                 bIdentify = false;
@@ -236,7 +244,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
                         if (IsRegister)
                         {
-                            #region -------- IF REGISTERED FINGERPRINT --------
+                                #region -------- IF REGISTERED FINGERPRINT --------
 
                             int ret = zkfp.ZKFP_ERR_OK;
                             int fid = 0, score = 0;
@@ -277,7 +285,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                                         string fingerPrintTemplate = string.Empty;
                                         zkfp.Blob2Base64String(RegTmp, regTempLen, ref fingerPrintTemplate);
 
-                                        Utilities.EnableControls(true, btnVerify, btnIdentify);
+                                        Utilities.EnableControls(true, button1, btnVerify, btnIdentify);
                                         Utilities.EnableControls(false, btnEnroll);
 
                                         MySqlConnection connection = null;
@@ -367,7 +375,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                             //}
 
 
-                            if (bIdentify)
+                            if ((bIdentify && userType == 1) || (bIdentify2 && userType == 2))
                             {
                                 int ret = zkfp.ZKFP_ERR_OK;
                                 int fid = 0, score = 0;
@@ -386,7 +394,26 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                             else
                             {
                                 ExAttDBRepo eR = new ExAttDBRepo();
+                                ExUniDBRepo eU = new ExUniDBRepo();
+
                                 var allFingers = eR.GetAllFingers();
+
+                                if (userType == 1)
+                                {
+                                    var x = eU.GetAllStudents().Select(e => e.Stu_ID).ToList();
+                                    allFingers = allFingers.Where(e => x.Contains(e.Uni_ID)).ToList();
+
+                                }
+
+                                else if (userType == 2)
+                                {
+                                    var x = eU.GetAllEmployees().Select(e => e.Emp_ID).ToList();
+                                    allFingers = allFingers.Where(e => x.Contains(e.Uni_ID)).ToList();
+
+                                }
+
+
+
                                 Finger selectedStudent = new Finger();
                                 foreach (var item in allFingers.ToList())
                                 {
@@ -395,7 +422,11 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                                     if (r > 0)
                                     {
                                         selectedStudent = item;
+                                        bool checkIsSavedthroughOneHour = eR.CheckIsSavedthroughOneHour(selectedStudent.Uni_ID);
+                                        if (!checkIsSavedthroughOneHour)
+                                        {
                                         eR.inserAttendanceLogToDB(selectedStudent.Uni_ID);
+                                        }
                                         break;
                                     }
                                 }
@@ -442,7 +473,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                 regTempLen = 0;
                 ClearImage();
                 cmbIdx.Items.Clear();
-                Utilities.EnableControls(true, btnInit);
+                Utilities.EnableControls(true, btnInit, button1);
                 Utilities.EnableControls(false, btnFree, btnClose, btnEnroll, btnVerify, btnIdentify);
 
                 DisplayMessage("Resources were successfully released from the memory !!", true);
@@ -459,6 +490,9 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
         private void bnEnroll_Click(object sender, EventArgs e)
         {
+            userType = 0;
+
+
             var registerUSerId = textBox1_SocialID.Text;
             ExAttDBRepo eA = new ExAttDBRepo();
             ExUniDBRepo eU = new ExUniDBRepo();
@@ -488,7 +522,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                 IsRegister = true;
                 RegisterCount = 0;
                 regTempLen = 0;
-                Utilities.EnableControls(false, btnEnroll, btnVerify, btnIdentify);
+                Utilities.EnableControls(false, btnEnroll, button1, btnVerify, btnIdentify);
                 DisplayMessage("Please press your finger " + REGISTER_FINGER_COUNT + " times to register", true);
 
                 lblFingerPrintCount.Visible = true;
@@ -572,7 +606,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             captureThread.Abort();
             if (result == zkfp.ZKFP_ERR_OK)
             {
-                Utilities.EnableControls(false, btnInit, btnClose, btnEnroll, btnVerify, btnIdentify);
+                Utilities.EnableControls(false, btnInit, btnClose, btnEnroll, button1, btnVerify, btnIdentify);
 
                 lblDeviceStatus.Text = Disconnected;
 
@@ -585,7 +619,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                     IsRegister = false;
                     cmbIdx.Items.Clear();
                     Utilities.EnableControls(true, btnInit);
-                    Utilities.EnableControls(false, btnClose, btnEnroll, btnVerify, btnIdentify);
+                    Utilities.EnableControls(false, btnClose, btnEnroll, button1, btnVerify, btnIdentify);
 
                     ReInitializeInstance();
 
@@ -615,9 +649,10 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
         private void ReInitializeInstance()
         {
             Utilities.EnableControls(true, btnInit);
-            Utilities.EnableControls(false, btnClose, btnEnroll, btnVerify, btnIdentify);
+            Utilities.EnableControls(false, btnClose, btnEnroll, button1, btnVerify, btnIdentify);
             DisconnectFingerPrintCounter();
             bIdentify = true;
+            bIdentify2 = true;
             btnVerify.Text = VerifyButtonDefault;
         }
 
@@ -695,6 +730,8 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
         private void button1_CheckSOcialID_Click(object sender, EventArgs e)
         {
+            userType = 0;
+
             var selectedStudentId = int.Parse(textBox1_SocialID.Text);
             var u = new ExUniDBRepo();
             var a = new ExAttDBRepo();
@@ -711,7 +748,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             }
             else if (selectedEmoloyeeModel != null && selectedEmoloyeeModel.Emp_ID > 0)
             {
-                label2_searchResult.Text = selectedEmoloyeeModel.Emp_ID + "," + selectedEmoloyeeModel.Emp_First_Name+" "+selectedEmoloyeeModel.Emp_Last_Name;
+                label2_searchResult.Text = selectedEmoloyeeModel.Emp_ID + "," + selectedEmoloyeeModel.Emp_First_Name + " " + selectedEmoloyeeModel.Emp_Last_Name;
             }
             else
             {
@@ -719,7 +756,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             }
         }
 
-  
+
 
         private void textBox1_SocialID_TextChanged_1(object sender, EventArgs e)
         {
@@ -748,8 +785,30 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
         private void ComboBox_classesList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Utilities.EnableControls(true, btnVerify);
+            Utilities.EnableControls(true, btnVerify, button1);
 
+        }
+
+        private void tabPage3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            userType = 2;
+
+            if (bIdentify2)
+            {
+                bIdentify2 = false;
+                btnVerify.Text = VerifyButtonToggle;
+                DisplayMessage(MessageManager.msg_FP_PressForVerification, true);
+            }
+            else
+            {
+                bIdentify2 = true;
+                btnVerify.Text = VerifyButtonDefault;
+            }
         }
     }
 }
