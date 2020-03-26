@@ -11,7 +11,7 @@ using ZKTecoFingerPrintScanner_Implementation;
 using ZKTecoFingerPrintScanner_Implementation.Helpers;
 using ZKTecoFingerPrintScanner_Implementation.Models;
 
-namespace Dofe_Re_Entry.UserControls.DeviceController
+ namespace Dofe_Re_Entry.UserControls.DeviceController
 {
     public partial class FingerPrintControl : UserControl
     {
@@ -168,7 +168,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
             }
             else
-                DisplayMessage("Unable to initailize the device. " + FingerPrintDeviceUtilities.DisplayDeviceErrorByCode(initializeCallBackCode) + " !! ", false);
+                DisplayMessage("Unable to initialize the device. " + FingerPrintDeviceUtilities.DisplayDeviceErrorByCode(initializeCallBackCode) + " !! ", false);
 
         }
 
@@ -244,7 +244,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
 
                         if (IsRegister)
                         {
-                                #region -------- IF REGISTERED FINGERPRINT --------
+                            #region -------- IF REGISTERED FINGERPRINT --------
 
                             int ret = zkfp.ZKFP_ERR_OK;
                             int fid = 0, score = 0;
@@ -380,6 +380,8 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                                 int ret = zkfp.ZKFP_ERR_OK;
                                 int fid = 0, score = 0;
                                 ret = fpInstance.Identify(CapTmp, ref fid, ref score);
+
+                                //check if 
                                 if (zkfp.ZKFP_ERR_OK == ret)
                                 {
                                     DisplayMessage(MessageManager.msg_FP_IdentificationSuccess + ret, true);
@@ -425,18 +427,18 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                                         bool checkIsSavedthroughOneHour = eR.CheckIsSavedthroughOneHour(selectedStudent.Uni_ID);
                                         if (!checkIsSavedthroughOneHour)
                                         {
-                                        eR.inserAttendanceLogToDB(selectedStudent.Uni_ID);
+                                            eR.inserAttendanceLogToDB(selectedStudent.Uni_ID);
                                         }
                                         break;
                                     }
                                 }
-                                //int ret = fpInstance.Match(CapTmp, RegTmp);
-                                //if (0 < ret)
+                                //if id for student match the his fingerprint then show message
                                 if (selectedStudent.Uni_ID > 0)
                                 {
                                     DisplayMessage(MessageManager.msg_FP_MatchSuccess + selectedStudent.Uni_ID, true);
                                     return;
                                 }
+                                //if the match is failed then show error message
                                 else
                                 {
                                     DisplayMessage(MessageManager.msg_FP_MatchFailed /*+ ret*/, false);
@@ -501,7 +503,7 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
             if (r.Uni_ID > 0)
             {
                 IsRegister = true;
-                DisplayMessage("this Uni_ID Is registerd befor", true);
+                DisplayMessage("this Uni_ID Is registerd before", true);
 
             }
             else
@@ -509,12 +511,22 @@ namespace Dofe_Re_Entry.UserControls.DeviceController
                 IsRegister = false;
             }
             var s = eU.GetStudent(registerUSerId);
-            if (s.Stu_ID < 1)
+            var em = eU.GetEmployee(registerUSerId);
+
+
+            if (em.Emp_ID < 1 && s.Stu_ID < 1)
             {
                 DisplayMessage("this Uni_ID Is not found", true);
                 IsRegister = true;
-
             }
+
+
+            //else if (s.Stu_ID < 1 )
+            //{
+            //    DisplayMessage("this Uni_ID Is not found", true);
+            //    IsRegister = true;
+
+            //}
 
             if (!IsRegister)
             {

@@ -18,13 +18,13 @@
 
         public const string msg_FP_UnableToEnrollCurrentUser = "Unable to enroll the current user. Error Code: ";
 
-        public const string msg_FP_MatchSuccess = "Match Successfull. Score: ";
+        public const string msg_FP_MatchSuccess = "Match Successfull. Uni_ID: ";
 
-        public const string msg_FP_MatchFailed = "Match Failed. Score: ";
+        public const string msg_FP_MatchFailed = "Match Failed. ";
 
-        public const string msg_FP_IdentificationSuccess = "Identification Failed. Score: ";
+        public const string msg_FP_IdentificationSuccess = "Identification Failed.";
 
-        public const string msg_FP_IdentificationFailed = "Identification Failed. Score: ";
+        public const string msg_FP_IdentificationFailed = "Identification Failed.";
 
         public const string msg_FP_UnidentifiedFingerPrint = "Un-identified fingerprint. Please enroll to register.";
 

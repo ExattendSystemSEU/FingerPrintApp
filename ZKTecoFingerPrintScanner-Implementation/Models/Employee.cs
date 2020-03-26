@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace ZKTecoFingerPrintScanner_Implementation.Models
 {
+    /// <summary>
+    ///  بيانات الموظف
+    /// </summary>
     public class Employee
     {
+        /// <summary>
+        /// رقم الهوية
+        /// </summary>
         public int Emp_ID { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string Emp_Password { get; set; }
-       // public int Emp_National_Num { get; set; }
         public string Emp_First_Name { get; set; }
         public string Emp_Middle_Name { get; set; }
         public string Emp_Last_Name { get; set; }

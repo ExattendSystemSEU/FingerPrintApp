@@ -34,6 +34,10 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
         }
         #endregion
 
+        /// <summary>
+        /// جلب جميع البيانات
+        /// </summary>
+        /// <returns></returns>
         public List<Student> GetAllStudents()
         {
             List<Student> ListStudent = new List<Student>();
@@ -42,6 +46,7 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
 
             MySqlCommand cmd = new MySqlCommand(query, dbConn);
 
+            //open connection wtih DB
             dbConn.Open();
 
             MySqlDataReader reader = cmd.ExecuteReader();
@@ -52,7 +57,6 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
                 String Stu_First_Name = reader["Stu_First_Name"].ToString();
                 String Stu_Middle_Name = reader["Stu_Middle_Name"].ToString();
                 String Stu_Last_Name = reader["Stu_Last_Name"].ToString();
-                // int Stu_National_Num = (int)reader["Stu_National_Num"];
 
 
                 Student u = new Student()
@@ -61,7 +65,6 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
                     Stu_ID = Stu_ID,
                     Stu_Last_Name = Stu_Last_Name,
                     Stu_Middle_Name = Stu_Middle_Name,
-                  //  Stu_National_Num = Stu_National_Num
                 };
 
                 ListStudent.Add(u);
@@ -90,29 +93,23 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             while (reader.Read())
             {
                 int Emp_ID = (int)reader["Emp_ID"];
-                //String Emp_Password = reader["Emp_Password"].ToString();
-                //  int Emp_National_Num = (int)reader["Emp_National_Num"];
                 String Emp_First_Name = reader["Emp_First_Name"].ToString();
                 String Emp_Middle_Name = reader["Emp_Middle_Name"].ToString();
                 String Emp_Last_Name = reader["Emp_Last_Name"].ToString();
                 String Emp_Email = reader["Emp_Email"].ToString();
                 String Emp_Gender = reader["Emp_Gender"].ToString();
-                //float Emp_Salary = (float)reader["Emp_Salary"];
-                //int Pos_ID = (int)reader["Pos_ID"];
+            
 
 
                 Employee u = new Employee()
                 {
                     Emp_ID = Emp_ID,
-                    //Emp_Password = Emp_Password,
                     Emp_First_Name = Emp_First_Name,
                     Emp_Email = Emp_Email,
                     Emp_Gender = Emp_Gender,
                     Emp_Last_Name = Emp_Last_Name,
                     Emp_Middle_Name = Emp_Middle_Name,
-                    //  Emp_National_Num = Emp_National_Num,
-                    //Emp_Salary = Emp_Salary,
-                    //Pos_ID = Pos_ID
+                    
                 };
 
                 ListEmployee.Add(u);
@@ -160,6 +157,44 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             dbConn.Close();
 
             return student;
+        }
+
+
+        public Employee GetEmployee(string emp_ID)
+        {
+            Employee employee = new Employee();
+
+            String query = "select * from uni_employee WHERE Emp_ID=" + emp_ID;
+
+            MySqlCommand cmd = new MySqlCommand(query, dbConn);
+
+            dbConn.Open();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int Emp_ID = (int)reader["Emp_ID"];
+                String Emp_First_Name = reader["Emp_First_Name"].ToString();
+                String Emp_Middle_Name = reader["Emp_Middle_Name"].ToString();
+                String Emp_Last_Name = reader["Emp_Last_Name"].ToString();
+                //  int Stu_National_Num = (int)reader["Stu_National_Num"];
+
+
+
+                employee.Emp_First_Name = Emp_First_Name;
+                employee.Emp_ID = Emp_ID;
+                employee.Emp_Last_Name = Emp_Last_Name;
+                employee.Emp_Middle_Name = Emp_Middle_Name;
+                //  student.Stu_National_Num = Stu_National_Num;
+
+            }
+
+            reader.Close();
+
+            dbConn.Close();
+
+            return employee;
         }
 
     }

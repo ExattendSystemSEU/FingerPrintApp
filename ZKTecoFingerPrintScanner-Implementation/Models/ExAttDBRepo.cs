@@ -72,6 +72,8 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             return ListEmployee;
         }
 
+
+        //check if the user r
         public Finger IsRegisterdBefor(string uni_ID)
         {
             Finger fingerData = new Finger();
@@ -99,6 +101,8 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             dbConn.Close();
             return fingerData;
         }
+
+        //insert the time,day and month for fingerprint attend to database
 
 
         public int inserAttendanceLogToDB(int Uni_ID)
@@ -133,6 +137,8 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             return 1;
         }
 
+
+        //save all fingerprint to Fingertemplate in table  
         public int inserFingerPrintToDB(string SoicailID, string FIngerTemplate)
         {
 
@@ -157,6 +163,8 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
 
         }
 
+
+        //get all class activate to verify fingerprint of student
         public List<ClassStatus> GetAllActivatedClasses()
         {
             List<ClassStatus> ListClasse = new List<ClassStatus>();
@@ -192,6 +200,9 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
             return ListClasse;
         }
 
+
+
+        //save only one fingerprint per user in one hour 
         internal bool CheckIsSavedthroughOneHour(int uni_ID)
         {
             var currentDatetime = DateTime.Now.ToString("yyyy-MM-dd HH:00:00");
