@@ -11,7 +11,7 @@ using ZKTecoFingerPrintScanner_Implementation;
 using ZKTecoFingerPrintScanner_Implementation.Helpers;
 using ZKTecoFingerPrintScanner_Implementation.Models;
 
- namespace Dofe_Re_Entry.UserControls.DeviceController
+namespace Dofe_Re_Entry.UserControls.DeviceController
 {
     public partial class FingerPrintControl : UserControl
     {
@@ -22,6 +22,9 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
 
         //1=student    .. 2=employee
         int userType = 0;
+
+        bool CanRegisterId = false;
+
 
         Thread captureThread = null;
 
@@ -77,8 +80,7 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
         }
 
 
-        // [ INITALIZE DEVICE ]
-        private void bnInit_Click(object sender, EventArgs e)
+        private void bnInit_Click()
         {
             userType = 0;
 
@@ -96,6 +98,18 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                     cmbIdx.SelectedIndex = 0;
                     btnInit.Enabled = false;
                     button1.Enabled = true;
+
+                    if (!CanRegisterId)
+                    {
+                        Utilities.EnableControls(true, btnEnroll);
+                    }
+                    else
+                    {
+                        Utilities.EnableControls(false, btnEnroll);
+
+                    }
+
+
                     DisplayMessage(MessageManager.msg_FP_InitComplete, true);
                 }
                 else
@@ -119,7 +133,115 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                 }
 
                 Utilities.EnableControls(false, btnInit);
-                Utilities.EnableControls(true, btnClose, btnEnroll/*, btnVerify*/, btnIdentify, btnFree);
+                Utilities.EnableControls(true, btnClose/*, btnEnroll*//*, btnVerify*/, btnIdentify, btnFree);
+
+                ComboBox_classesList.Enabled = true;
+
+
+                RegisterCount = 0;
+                regTempLen = 0;
+                iFid = 1;
+
+                //for (int i = 0; i < 3; i++)
+                for (int i = 0; i < REGISTER_FINGER_COUNT; i++)
+                {
+                    RegTmps[i] = new byte[2048];
+                }
+
+                byte[] paramValue = new byte[4];
+                int size = 4;
+
+                //fpInstance.GetParameters
+
+                fpInstance.GetParameters(1, paramValue, ref size);
+                zkfp2.ByteArray2Int(paramValue, ref mfpWidth);
+
+                size = 4;
+                fpInstance.GetParameters(2, paramValue, ref size);
+                zkfp2.ByteArray2Int(paramValue, ref mfpHeight);
+
+                FPBuffer = new byte[mfpWidth * mfpHeight];
+
+                //FPBuffer = new byte[fpInstance.imageWidth * fpInstance.imageHeight];
+
+                captureThread = new Thread(new ThreadStart(DoCapture));
+                captureThread.IsBackground = true;
+                captureThread.Start();
+
+
+                bIsTimeToDie = false;
+
+                string devSN = fpInstance.devSn;
+                lblDeviceStatus.Text = "Connected \nDevice S.No: " + devSN;
+
+                DisplayMessage("You are now connected to the device.", true);
+
+
+
+                #endregion
+
+            }
+            else
+                DisplayMessage("Unable to initialize the device. " + FingerPrintDeviceUtilities.DisplayDeviceErrorByCode(initializeCallBackCode) + " !! ", false);
+
+        }
+
+
+        // [ INITALIZE DEVICE ]
+        private void bnInit_Click(object sender, EventArgs e)
+        {
+            userType = 0;
+
+            parentForm.statusBar.Visible = false;
+            cmbIdx.Items.Clear();
+
+            int initializeCallBackCode = fpInstance.Initialize();
+            if (zkfp.ZKFP_ERR_OK == initializeCallBackCode)
+            {
+                int nCount = fpInstance.GetDeviceCount();
+                if (nCount > 0)
+                {
+                    for (int i = 1; i <= nCount; i++) cmbIdx.Items.Add(i.ToString());
+
+                    cmbIdx.SelectedIndex = 0;
+                    btnInit.Enabled = false;
+                    button1.Enabled = true;
+
+                    if (!CanRegisterId)
+                    {
+                        Utilities.EnableControls(true, btnEnroll);
+                    }
+                    else
+                    {
+                        Utilities.EnableControls(false, btnEnroll);
+
+                    }
+
+
+                    DisplayMessage(MessageManager.msg_FP_InitComplete, true);
+                }
+                else
+                {
+                    int finalizeCount = fpInstance.Finalize();
+                    DisplayMessage(MessageManager.msg_FP_NotConnected, false);
+                }
+
+
+
+
+                // CONNECT DEVICE
+
+                #region -------- CONNECT DEVICE --------
+
+                int openDeviceCallBackCode = fpInstance.OpenDevice(cmbIdx.SelectedIndex);
+                if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode)
+                {
+                    DisplayMessage($"Uable to connect with the device! (Return Code: {openDeviceCallBackCode} )", false);
+                    return;
+                }
+
+                Utilities.EnableControls(false, btnInit);
+                Utilities.EnableControls(true, btnClose/*, btnEnroll*//*, btnVerify*/, btnIdentify, btnFree);
 
                 ComboBox_classesList.Enabled = true;
 
@@ -223,6 +345,11 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                 bIdentify = false;
                 btnVerify.Text = VerifyButtonToggle;
                 DisplayMessage(MessageManager.msg_FP_PressForVerification, true);
+
+
+                bIdentify2 = true;
+                button1.Text = VerifyButtonDefault;
+
             }
             else
             {
@@ -240,7 +367,11 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                 case MESSAGE_CAPTURED_OK:
                     {
                         parentForm.statusBar.Visible = false;
-                        DisplayFingerPrintImage();
+
+                        if (!bIdentify2 || !bIdentify)
+                        {
+                            DisplayFingerPrintImage();
+                        }
 
                         if (IsRegister)
                         {
@@ -362,7 +493,7 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                             }
                             #endregion
                         }
-                        else
+                        else if (!bIdentify2 || !bIdentify)
                         {
 
                             #region ------- IF RANDOM FINGERPRINT -------
@@ -424,7 +555,7 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                                     if (r > 0)
                                     {
                                         selectedStudent = item;
-                                        bool checkIsSavedthroughOneHour = eR.CheckIsSavedthroughOneHour(selectedStudent.Uni_ID);
+                                        bool checkIsSavedthroughOneHour = eR.CheckIsSavedthroughOneHour(selectedStudent.Uni_ID,userType);
                                         if (!checkIsSavedthroughOneHour)
                                         {
                                             eR.inserAttendanceLogToDB(selectedStudent.Uni_ID);
@@ -505,6 +636,11 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                 IsRegister = true;
                 DisplayMessage("this Uni_ID Is registerd before", true);
 
+                if (captureThread != null && captureThread.IsAlive)
+                {
+                    Utilities.EnableControls(false, btnEnroll);
+                }
+
             }
             else
             {
@@ -540,6 +676,7 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
                 lblFingerPrintCount.Visible = true;
                 lblFingerPrintCount.Text = REGISTER_FINGER_COUNT.ToString();
             }
+            bnInit_Click();
         }
 
 
@@ -743,28 +880,65 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
         private void button1_CheckSOcialID_Click(object sender, EventArgs e)
         {
             userType = 0;
+            ExAttDBRepo eA = new ExAttDBRepo();
 
-            var selectedStudentId = int.Parse(textBox1_SocialID.Text);
-            var u = new ExUniDBRepo();
-            var a = new ExAttDBRepo();
-
-            var allStudents = u.GetAllStudents();
-            var allEmployees = u.GetAllEmployees();
-
-            var selectedStudentModel = allStudents.Where(su => su.Stu_ID == selectedStudentId).FirstOrDefault();
-            var selectedEmoloyeeModel = allEmployees.Where(em => em.Emp_ID == selectedStudentId).FirstOrDefault();
-
-            if (selectedStudentModel != null && selectedStudentModel.Stu_ID > 0)
+            long selectedStudentId = 0;
+            if (textBox1_SocialID.Text.Length > 0)
             {
-                label2_searchResult.Text = selectedStudentModel.Stu_ID + "," + selectedStudentModel.Stu_First_Name + " " + selectedStudentModel.Stu_Last_Name;
-            }
-            else if (selectedEmoloyeeModel != null && selectedEmoloyeeModel.Emp_ID > 0)
-            {
-                label2_searchResult.Text = selectedEmoloyeeModel.Emp_ID + "," + selectedEmoloyeeModel.Emp_First_Name + " " + selectedEmoloyeeModel.Emp_Last_Name;
+                selectedStudentId = long.Parse(textBox1_SocialID.Text);
+
+                CanRegisterId = false;
+
+                var u = new ExUniDBRepo();
+                var a = new ExAttDBRepo();
+
+                var allStudents = u.GetAllStudents();
+                var allEmployees = u.GetAllEmployees();
+
+                var selectedStudentModel = allStudents.Where(su => su.Stu_ID == selectedStudentId).FirstOrDefault();
+                var selectedEmoloyeeModel = allEmployees.Where(em => em.Emp_ID == selectedStudentId).FirstOrDefault();
+
+
+
+                var r = eA.IsRegisterdBefor(textBox1_SocialID.Text);
+
+
+
+                if (selectedStudentModel != null && selectedStudentModel.Stu_ID > 0)
+                {
+                    label2_searchResult.Text = selectedStudentModel.Stu_ID + "," + selectedStudentModel.Stu_First_Name + " " + selectedStudentModel.Stu_Last_Name;
+
+                    if (captureThread != null && captureThread.IsAlive && r.Uni_ID < 1)
+                    {
+                        CanRegisterId = true;
+                        Utilities.EnableControls(true, btnEnroll);
+                    }
+
+                }
+                else if (selectedEmoloyeeModel != null && selectedEmoloyeeModel.Emp_ID > 0)
+                {
+                    label2_searchResult.Text = selectedEmoloyeeModel.Emp_ID + "," + selectedEmoloyeeModel.Emp_First_Name + " " + selectedEmoloyeeModel.Emp_Last_Name;
+
+                    if (captureThread != null && captureThread.IsAlive && r.Uni_ID < 1)
+                    {
+                        CanRegisterId = true;
+
+                        Utilities.EnableControls(true, btnEnroll);
+                    }
+                }
+                else
+                {
+                    label2_searchResult.Text = "Not Found";
+                    Utilities.EnableControls(false, btnEnroll);
+
+                }
+
+                //MessageBox.Show("Regidsterd Befor");
+
             }
             else
             {
-                label2_searchResult.Text = "Not Found";
+                label2_searchResult.Text = "Please fill out this field";
             }
         }
 
@@ -813,13 +987,17 @@ using ZKTecoFingerPrintScanner_Implementation.Models;
             if (bIdentify2)
             {
                 bIdentify2 = false;
-                btnVerify.Text = VerifyButtonToggle;
+                button1.Text = VerifyButtonToggle;
                 DisplayMessage(MessageManager.msg_FP_PressForVerification, true);
+
+
+                bIdentify = true;
+                btnVerify.Text = VerifyButtonDefault;
             }
             else
             {
                 bIdentify2 = true;
-                btnVerify.Text = VerifyButtonDefault;
+                button1.Text = VerifyButtonDefault;
             }
         }
     }

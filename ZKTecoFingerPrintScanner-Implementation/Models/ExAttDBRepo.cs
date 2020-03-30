@@ -203,10 +203,20 @@ namespace ZKTecoFingerPrintScanner_Implementation.Models
 
 
         //save only one fingerprint per user in one hour 
-        internal bool CheckIsSavedthroughOneHour(int uni_ID)
+        internal bool CheckIsSavedthroughOneHour(int uni_ID, int userType)
         {
             var currentDatetime = DateTime.Now.ToString("yyyy-MM-dd HH:00:00");
-            String query = "select * From fin_attend where Uni_ID=" + uni_ID + " and Exa_Attend_Time >'" + currentDatetime +"'";
+            switch (userType)
+            {
+                case 1:
+                    currentDatetime = DateTime.Now.ToString("yyyy-MM-dd HH:00:00");
+                    break;
+                case 2:
+                    currentDatetime = DateTime.Now.AddMinutes(-20).ToString("yyyy-MM-dd HH:mm:00");
+                    break;
+            }
+
+            String query = "select * From fin_attend where Uni_ID=" + uni_ID + " and Exa_Attend_Time >'" + currentDatetime + "'";
 
             MySqlCommand cmd = new MySqlCommand(query, dbConn);
 
